@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const geoData = require('./data/geo.json');
-const weatherData = require('./data/darksky.json');
+// const weatherData = require('./data/darksky.json');
 const superagent = require('superagent');
 
 const app = express();
@@ -46,25 +46,25 @@ app.get('/location', async(req, res) => {
 
 });
 
-const toWeather = () => {
-    const firstResult = weatherData.daily.data[0];
+// const toWeather = () => {
+//     const firstResult = weatherData.daily.data[0];
 
-    return {
-        forecast: firstResult.summary,
-        time: new Date(firstResult.time).toDateString()
-    };
-};
+//     return {
+//         forecast: firstResult.summary,
+//         time: new Date(firstResult.time).toDateString()
+//     };
+// };
 
-app.get('/weather', (req, res) => {
-    try {
-        const weather = req.query.weather;
-        const result = toWeather(weather);
-        res.status(200).json([result]);
-    }
-    catch (err) {
-        res.status(500).send('Error, try again!');
-    }
-});
+// app.get('/weather', (req, res) => {
+//     try {
+//         const weather = req.query.weather;
+//         const result = toWeather(weather);
+//         res.status(200).json([result]);
+//     }
+//     catch (err) {
+//         res.status(500).send('Error, try again!');
+//     }
+// });
 
 app.listen(PORT, () => {
     console.log('Listening on port', PORT);

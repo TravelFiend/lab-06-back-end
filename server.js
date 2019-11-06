@@ -1,7 +1,8 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-// const weatherData = require('./data/darksky.json');
+// const geoData = require('./data/geo.json');
+..const weatherData = require('./data/darksky.json');
 const superagent = require('superagent');
 
 const app = express();
@@ -13,20 +14,24 @@ app.use(cors());
 app.use(express.static('./public'));
 // let latAndLng;
 
-const toLocation = (locItem) => {
+const toLocation = placeItem => {
+    // const latitude = placeItem.geometry.location.lat; 
+    // const longitude = placeItem.geometry.location.lng;
+    // const formatQ = placeItem.formatted_address;
     const {
-        geometry : {
-            location : {
+        geometry: {
+            location: {
                 lat,
-                lng,
+                lng
             },
         },
-        formatted_address,
-    } = locItem;
+        formatted_address
+    } = placeItem;
+    
     return {
-        formatted_query : formatted_address,
+        formatted_query: formatted_address,
         latitude : lat,
-        longitude : lng,
+        longitude : lng
     };
 };
 
@@ -56,7 +61,7 @@ app.get('/location', async(req, res) => {
 
 //     return {
 //         forecast: firstResult.summary,
-//         time: new Date(firstResult.time).toDateString()
+//         time: new Date(firstResult.time * 1000).toDateString()
 //     };
 // };
 

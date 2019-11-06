@@ -32,7 +32,6 @@ const toLocation = placeItem => {
 };
 
 app.get('/location', async(req, res) => {
-
     const mapsApiKey = process.env.GOOGLE_MAPS_API_KEY;
     const queryParams = req.query.search;
     const actualLocation = await superagent.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${queryParams}&key=${mapsApiKey}`);
@@ -56,12 +55,11 @@ const getWeather = async(lat, lng) => {
     });
     return newWeatherArray;
 };
-app.get('/weather', async(req, res) => {
 
+app.get('/weather', async(req, res) => {
     const ourWeather = await getWeather(latAndLng.latitude, latAndLng.longitude);
 
     res.status(200).json(ourWeather);
-
 });
 
 app.listen(PORT, () => {

@@ -42,28 +42,20 @@ app.get('/location', (req, res) => {
     }
 });
 
-
-const getWeather = () => {
-    if (weather === 'bad weather'){
-        throw new Error();
-    }
-    return toWeather(weatherData);
-};
-
 const toWeather = () => {
     const firstResult = weatherData.daily.data[0];
 
     return {
         forecast: firstResult.summary,
-        time: new Date(firstResult.time).toDateString();
+        time: new Date(firstResult.time).toDateString()
     };
 };
 
 app.get('/weather', (req, res) => {
     try {
         const weather = req.query.weather;
-        const result = getWeather(weather);
-        res.status(200).json(result);
+        const result = toWeather(weather);
+        res.status(200).json([result]);
     }
     catch (err) {
         res.status(500).send('Error, try again!');

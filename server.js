@@ -75,21 +75,30 @@ app.get('/location', async(req, res) => {
 //         res.status(500).send('Error, try again!');
 //     }
 // });
+
+
+const getWeather = async(lat, lng) => { 
+    //lat = latAndLng.lat;
+    //lng = latAndLng.lng;
+    const darkskyApikey = process.env.DARKSKY_KEY;
+    const actualWeather = await superagent.get(`https://api.darksky.net/forecast/${darkskyApikey}/${lat},${lng}`);
+    const parsedWeather = JSON.parse(actualWeather.text);
+    //const result = {
+        //forcast : parsedWeather.daily.data.summary,
+        //time: new Date(
+    const newWeatherArray = (parsedWeather.daily.data).map(weatherItem => {
+        return {
+            forecast : weatherItem.summary,
+            time : new Date(weatherItem.time * 1000).toDateString()
+        };
+    });
+    return newWeatherArray;
+};
 app.get('/weather', async(req, res) => {
 
-    const darkskyApikey = process.env.DARKSKY_KEY;
-    // const queryParams = req.query;
-    // const {
-    //     latitude,
-    //     longitude,
-    // } = queryParams;
-    const actualWeather = await superagent.get(`https://api.darksky.net/forecast/${darkskyApikey}/${latAndlng.lat},${latAndlng.lng}`);
-    const parsedWeather = JSON.parse(actualWeather.text);
-    const result = {
-        forcast : parsedWeather.daily.data[0].summary,
-        time: new Date(parsedWeather.daily.data[0].time * 1000).toDateString()
-    };
-    res.status(200).json(result);
+    const ourWeather = await getWeather(latAndLng.latitude, latAndLng.longitude);
+
+    res.status(200).json(ourWeather);
 
 });
 

@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 // const geoData = require('./data/geo.json');
-..const weatherData = require('./data/darksky.json');
+//const weatherData = require('./data/darksky.json');
 const superagent = require('superagent');
 
 const app = express();
@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 
 app.use(express.static('./public'));
-// let latAndLng;
+let latAndLng;
 
 const toLocation = placeItem => {
     // const latitude = placeItem.geometry.location.lat; 
@@ -27,7 +27,8 @@ const toLocation = placeItem => {
         },
         formatted_address
     } = placeItem;
-    
+
+
     return {
         formatted_query: formatted_address,
         latitude : lat,
@@ -51,9 +52,8 @@ app.get('/location', async(req, res) => {
     const parsedLocation = JSON.parse(actualLocation.text).results[0];
     const response = toLocation(parsedLocation);
 
-    // latAndLng = response;
+    latAndLng = response;
     res.json(response);
-
 });
 
 // const toWeather = () => {
@@ -75,6 +75,23 @@ app.get('/location', async(req, res) => {
 //         res.status(500).send('Error, try again!');
 //     }
 // });
+app.get('/weather', async(req, res) => {
+
+    const darkskyApikey = process.env.DARKSKY_KEY;
+    // const queryParams = req.query;
+    // const {
+    //     latitude,
+    //     longitude,
+    // } = queryParams;
+    const actualWeather = await superagent.get(`https://api.darksky.net/forecast/${darkskyApikey}/${latAndlng.lat},${latAndlng.lng}`);
+    const parsedWeather = JSON.parse(actualWeather.text);
+    const result = {
+        forcast : parsedWeather.daily.data[0].summary,
+        time: new Date(parsedWeather.daily.data[0].time * 1000).toDateString()
+    };
+    res.status(200).json(result);
+
+});
 
 app.listen(PORT, () => {
     console.log('Listening on port', PORT);

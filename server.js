@@ -70,10 +70,13 @@ const getTrails = async(lat, lng) => {
         return {
             name: trail.name,
             location: trail.location,
-            imgSmall: trail.imgSmall,
             stars: trail.stars,
-            votes: trail.starVotes,
-            length: trail['length']
+            star_votes: trail.starVotes,
+            length: trail['length'],
+            conditions: trail.conditionStatus,
+            condition_date: trail.conditionDate.slice(0, 10),
+            condition_time: trail.conditionDate.slice(11),
+            summary: trail.summary
         };
     });
     return trailsArr;

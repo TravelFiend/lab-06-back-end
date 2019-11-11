@@ -98,7 +98,7 @@ app.get('/trails', async(req, res) => {
 //         .then()
 
 // }
-app.get('/yelp', async (req, res) => { 
+app.get('/yelp', async(req, res) => { 
     const lat = latAndLng.latitude; 
     const lng = latAndLng.longitude;
     const yelpApiKey = process.env.YELP_KEY;

@@ -82,13 +82,33 @@ const getTrails = async(lat, lng) => {
     return trailsArr;
 };
 
-
-// "type": "Featured Hike", "summary": "Widely recognized as one of the best urban trails in the country.", "difficulty": "green", "starVotes": 13,"url": "https://www.hikingproject.com/trail/7008385/highline-canal-trail", "imgSqSmall": "https://cdn-files.apstatic.com/hike/7007020_sqsmall_1554321989.jpg", "imgSmall": "https://cdn-files.apstatic.com/hike/7007020_small_1554321989.jpg", "imgSmallMed": "https://cdn-files.apstatic.com/hike/7007020_smallMed_1554321989.jpg", "imgMedium": "https://cdn-files.apstatic.com/hike/7007020_medium_1554321989.jpg", "length": 61.3, "ascent": 369, "descent": -468, "high": 5549, "low": 5435, "longitude": -105.0908, "latitude": 39.487, "conditionStatus": "Unknown", "conditionDetails": null, "conditionDate": "1970-01-01 00:00:00" }
-
 app.get('/trails', async(req, res) => {
     const ourTrail = await getTrails(latAndLng.latitude, latAndLng.longitude);
 
     res.status(200).json(ourTrail);
+});
+
+const getYelp = async(lat, lng) => {
+    const yelpApiKey = process.env.YELP_KEY;
+    const yelpStr = await superagent.get(`https://api.yelp.com/v3/businesses/search?latitude=${lat}&longitude=${lng}`).set(`Authorization`, `Bearer ${yelpApiKey}`);
+    const parsedYelp = JSON.parse(yelpStr.text);
+
+    const yelpArr = (parsedYelp.businesses).map(business => {
+        return {
+            name: business.name,
+            image_url: business.image_url,
+            price: business.price,
+            rating: business.rating,
+            url: business.url
+        };
+    });
+    return yelpArr;
+};
+
+app.get('/reviews', async(req, res) => {
+    const ourYelp = await getYelp(latAndLng.latitude, latAndLng.longitude);
+
+    res.status(200).json(ourYelp);
 });
 
 app.listen(PORT, () => {

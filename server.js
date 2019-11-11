@@ -91,6 +91,42 @@ app.get('/trails', async(req, res) => {
     res.status(200).json(ourTrail);
 });
 
+// const getYelp = (lat, lng) => {
+//     const yelpApiKey = process.env.YELP_KEY;
+//     const yelpString = superagent.get(`https://api.yelp.com/v3/businesses/search?latitude=${lat}&longitude=${lng}&categories=restaurants&limit=20`)
+//         .set(`API-KEY', ${yelpApiKey}`);
+//         .then()
+
+// }
+app.get('/yelp', async (req, res) => { 
+    const lat = latAndLng.latitude; 
+    const lng = latAndLng.longitude;
+    const yelpApiKey = process.env.YELP_KEY;
+    const thisFirstResArr = superagent.get(`https://api.yelp.com/v3/businesses/search?latitude=${lat}&longitude=${lng}&categories=restaurants&limit=20`)
+        .set(`API-KEY', ${yelpApiKey}`)
+        .then(res => {
+            const parsedRes = JSON.parse(res.text);
+            return parsedRes;
+        });
+    
+    const finalYelpArr = thisFirstResArr.map(obj => {
+        const yelpObj = {
+            name: obj.name,
+            image_url : obj.photos[0],
+            price : obj.price,
+            rating : obj.rating,
+            url : obj.url
+        };
+        return yelpObj;
+    });
+    res.status(200).json(finalYelpArr);
+});
+
+// app.get('/yelp', async(req, res) => {
+//     const ourYelpStuff = await getYelp(latAndLng.latitude, latAndLng.longitude);
+//     res.status(200).json(ourYelpStuff);
+// });
+
 app.listen(PORT, () => {
     console.log('Listening on port', PORT);
 });

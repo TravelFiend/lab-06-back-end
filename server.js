@@ -102,14 +102,16 @@ app.get('/yelp', async(req, res) => {
     const lat = latAndLng.latitude; 
     const lng = latAndLng.longitude;
     const yelpApiKey = process.env.YELP_KEY;
-    const thisFirstResArr = superagent.get(`https://api.yelp.com/v3/businesses/search?latitude=${lat}&longitude=${lng}&categories=restaurants&limit=20`)
-        .set(`API-KEY', ${yelpApiKey}`)
-        .then(res => {
-            const parsedRes = JSON.parse(res.text);
-            return parsedRes;
-        });
+    const thisFirstResArr = await superagent.get(`https://api.yelp.com/v3/businesses/search?latitude=${lat}&longitude=${lng}&categories=restaurants&limit=20`)
+        .set(`API-KEY', ${yelpApiKey}`);
+        // .then(res => {
+        //     const parsedRes = JSON.parse(res.text);
+        //     return parsedRes;
+        // });
+    const parsedResArr = JSON.parse(thisFirstResArr);
+
     
-    const finalYelpArr = thisFirstResArr.map(obj => {
+    const finalYelpArr = parsedResArr.map(obj => {
         const yelpObj = {
             name: obj.name,
             image_url : obj.photos[0],
